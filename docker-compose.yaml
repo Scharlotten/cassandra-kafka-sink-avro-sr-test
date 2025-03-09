@@ -1,0 +1,35 @@
+services:  
+  connect:
+    image: confluentinc/cp-kafka-connect:latest
+    container_name: connect
+    depends_on:
+      - cassandra
+    volumes:
+      - ./jars:/etc/kafka-connect/jars
+      - ./conn-config:/workarea
+    command: [ "connect-standalone", "/workarea/worker.properties", "/workarea/cassandra_conn.properties" ]
+  
+
+  cassandra:
+    image: cassandra:latest
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+    volumes:
+      - ./cassandra-data:/var/lib/cassandra
+      - ./scripts/:/custom_scripts/
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh cassandra -e 'DESCRIBE KEYSPACES;'"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  sample-data:
+    image: cassandra:latest
+    depends_on:
+      - cassandra
+    restart: "no"
+    entrypoint: ["/custom_scripts/pre_create.sh"]
+    volumes:
+      - ./scripts/:/custom_scripts/

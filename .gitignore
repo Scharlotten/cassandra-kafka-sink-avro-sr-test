@@ -1,0 +1,4 @@
+jars/
+conn-config/
+/cassandra-data
+
