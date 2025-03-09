@@ -12,6 +12,8 @@ Save the API key and secret as it will be needed to authenticate to the Kafka cl
 
 ![alt text](image.png) 
 
+Select the Stocks (from the UI) 
+(It is important you select the stocks, as the keyspace and the table structure will need to be pre-created, you can choose any sample data from here, just make sure you pre-create the table, and you configure the mapping in the cassandra-conn.properties file)
 
 The docker compose file desdcribes all the infrastructure components needed to configure the connector. 
 
@@ -61,4 +63,19 @@ https://github.com/datastax/kafka-sink/releases/tag/1.7.2
 Create a directory called "jars" 
 
 Move the connector jar to this directory. 
+
+
+Once everything is configured, do 
+
+`docker compose up -d`
+
+Follow the connector logs 
+`docker compose logs connect -f `
+
+Enter into the cassandra pod to check if data is coming through
+
+`docker exec -it kafka-test-cassandra-1 cqlsh`
+`select * from kafka_sink.datagen limit 10;`
+
+There wont' be too many rows in the table as by the key the data gets updated and only 7 keys are present in the dummy data. 
 
