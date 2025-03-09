@@ -1,6 +1,21 @@
-The docker compose file should hold the infrastructure needed to configure the connector. 
+First register for a Confluent Cloud account. 
 
-If you want to re-create the test scenario make sure that you update the volume mappings
+Create a cluster in any cloud provider in Confluent Cloud. 
+
+Create a topic called "datagen-topic". 
+
+Once the topic is ready, create a sample-data connector that produces **avro** messages into the topic.
+
+Create and API key and secret to access the cluster (this can belong to your account no need to create a service account).
+
+Save the API key and secret as it will be needed to authenticate to the Kafka cluster. 
+
+![alt text](image.png) 
+
+
+The docker compose file desdcribes all the infrastructure components needed to configure the connector. 
+
+If you want to re-create the test scenario make sure that you update the volume mappings in the docker-compose.yaml file. 
 
 First:
 Look for this section in the `docker-compose.yaml` file
@@ -9,11 +24,10 @@ Look for this section in the `docker-compose.yaml` file
       - ./jars:/etc/kafka-connect/jars
       - ./conn-config:/workarea
 ```
-Make sure you create a `conn-cofnig` directory that holds the `conn-config-template` files. 
+Make sure you create a `conn-cofnig` directory that copies all the `conn-config-template` files. 
 Populate the files with the relevant API keys and secrets to authenticate to the Kafka cluster. 
 
 See this section from the worker:
-
 
 value.converter.schema.registry.url=<SCHEMA_REGISTRY_URL>
 value.converter.enhanced.avro.schema.support=true
@@ -42,3 +56,9 @@ confluent.topic.sasl.mechanism=PLAIN
 Once configured - make sure you mount the volume to the connect container with the files that have the values configured. 
 
 Download the connector from Github. 
+https://github.com/datastax/kafka-sink/releases/tag/1.7.2
+
+Create a directory called "jars" 
+
+Move the connector jar to this directory. 
+
