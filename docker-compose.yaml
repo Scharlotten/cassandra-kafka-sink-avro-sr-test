@@ -11,11 +11,12 @@ services:
   
 
   cassandra:
-    image: cassandra:latest
+    image: proxy.replicated.com/proxy/mission-control/559669398656.dkr.ecr.us-west-2.amazonaws.com/engops-shared/hcd/staging/hcd:1.1.0
     ports:
       - "9042:9042"
     environment:
       - CASSANDRA_CLUSTER_NAME=TestCluster
+      - DS_LICENSE=accept
     volumes:
       - ./cassandra-data:/var/lib/cassandra
       - ./scripts/:/custom_scripts/
@@ -25,11 +26,18 @@ services:
       timeout: 10s
       retries: 5
 
-  sample-data:
-    image: cassandra:latest
-    depends_on:
-      - cassandra
-    restart: "no"
-    entrypoint: ["/custom_scripts/pre_create.sh"]
-    volumes:
-      - ./scripts/:/custom_scripts/
+
+  # cassandra:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9042:9042"
+  #   environment:
+  #     - CASSANDRA_CLUSTER_NAME=TestCluster
+  #   volumes:
+  #     - ./cassandra-data:/var/lib/cassandra
+  #     - ./scripts/:/custom_scripts/
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "cqlsh cassandra -e 'DESCRIBE KEYSPACES;'"]
+  #     interval: 20s
+  #     timeout: 10s
+  #     retries: 5
